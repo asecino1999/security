@@ -7,13 +7,13 @@ export default class Add extends React.Component {
         super(props)
         console.log('ddfsdffdsf')
         this.state = {
-            
+            phone:null
         }
     }
     render(){
         return (<View  style={styles.add}>
-            <Button title={'add'} onPress={()=>this.props.add()} ></Button>
-            <TextInput    keyboardType='numeric' style={styles.input} ></TextInput>
+            <Button title={'add'} onPress={()=>{this.props.add(this.state.phone) ;this.setState({phone:null})}} ></Button>
+            <TextInput onChange={(text)=>this.setState({phone:Number(text)})}   keyboardType='numeric' style={styles.input} text={this.state.phone} ></TextInput>
         </View>)
     }
 }

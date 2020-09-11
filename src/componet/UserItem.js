@@ -31,9 +31,7 @@ export default class UserItem extends React.Component {
                     title={'eliminar'}
                     onPress={() => this.props.delete(this.props.code)}
                 />
-                <Button
-                    title={'edit'}
-                />
+                
 
             </View>
         )

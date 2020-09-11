@@ -16,6 +16,13 @@ export default function ReciveCall(props) {
             <Text style={styles.llamando}  >
                 esta en Peligro  ...
            </Text>
+           <Text style={styles.llamando}  >
+               Conserve la calma 
+               </Text>
+           <Text style={styles.llamando}  >
+                Le recomendamos llamarlo inmediamtante 
+                llamar a la policia 
+           </Text>
         </View>
     )
 }
@@ -40,7 +47,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: '30%',
+       // paddingVertical: '30%',
         fontSize: 30
 
     },

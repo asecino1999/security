@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, FlatList, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, Image, ScrollView, TextInput, TextInputBase } from 'react-native';
 
 export default class UserData extends React.Component {
   render() {
@@ -23,6 +23,7 @@ export default class UserData extends React.Component {
 
           </View>
           
+          <TextInput></TextInput>
         </View>
 
         <Button

@@ -62,46 +62,71 @@ export default class App extends React.Component {
   }
  componentDidMount(){
   this.updateData()
+  this.timer = setInterval(()=> this.getContactstate(), 1000)
+ }
+
+
+ getContactstate (){
+  const urlcontact = host + '/api/users/contacts/'+usercode;
+  axios(urlcontact).then((res)=>{
+    let users = res.data.userContact
+    users.forEach(element => {
+        if(element.state!=="NoProblem"){
+          this.showCall()
+        }
+    });
+  })
  }
  updateData(){
   const urlcontact = host + '/api/users/contacts/'+usercode;
   const urlperfil = host + '/api/users/get/'+usercode;
 
-  //console.log('req'+urlcontact)
-
-   
+  let users 
+  
    axios.get(urlcontact)
    .then(res => {
     const persons = res.data;
-   // console.log(res)
-   //console.log(res.data)
-    //console.log(res.data.users)
-    let users = res.data.userContact
+    users = res.data.userContact
     users=users.map((index)=>{
-      index.key= 'k' + this.state.cont + 1 + '' + new Date()
+      index.key=index.key?index.key: 'k' + this.state.cont + 1 + '' + new Date()
       return index
     })
-    
-    this.setState({data:users})
-    //this.setState({ persons });
   })
   .then(()=>axios.get(urlperfil))
   .then((res)=>{
-    //console.log(res.data.users)
-    this.setState( {perfil:res.data.users})
+
+    this.setState( { data:users , perfil:res.data.users})
   })
   .catch((e)=>console.log(e))
  }
 
-  add() {
+  add(id) {
     let data = this.state.data
-    data.push({
+    
+    const newUser = {
       name: 'contacto ' + (data.length + 1),
-      id: 'k' + this.state.cont + 1 + ''+new Date(),
+      id: id?id: Number(new Date()),
       key: 'k' + this.state.cont + 1 + '' + new Date(),
+      email: "jsmith@yahoo.com",
+      contacts: [],
+      photo: "https://los40es00.epimg.net/los40/imagenes/2016/05/09/videojuegos/1462795844_886980_1462795962_noticia_normal.jpg",
+      state: "NoProblem"
 
-    })
-    this.setState({ data: data, cont: data.length })
+    };
+    
+    //data.push(newUser)
+    const urladd = host + '/api/users/addcontact/'+usercode+'/'+newUser.id;
+    const urlcreate= host + '/api/users/add';
+
+    axios({
+      method: 'post',
+      url: urlcreate,
+      data: {user:newUser}
+    })//.then (()=>this.setState({ data: data, cont: data.length }))
+    .then(()=>axios(urladd))
+    .then(()=>this.updateData())
+    .catch((e)=>console.log(e))
+    
   }
 
 
@@ -135,6 +160,10 @@ export default class App extends React.Component {
       </View>)
   }
   call(){
+
+    const urlcall = host + '/api/users/call/'+usercode;
+    axios(urlcall).
+    catch((e)=>console.log(e))
     this.setState({ llamando: !this.state.llamando , showList: false , showCalling:false})
   }
 
@@ -146,10 +175,19 @@ export default class App extends React.Component {
 
   showCall() {
 
-    if (this.state.showCalling)
+    if (this.state.showCalling){
+
+      let name =''
+      let number=0 
+      this.state.data.forEach(element => {
+        if(element.state!=='NoProblem'){
+          name=element.name
+          number=element.number
+        }
+      });
       return (
-        ReciveCall({ name: 'el vato', code: '1234' })
-      )
+        ReciveCall({ name: name, code: number })
+      )}
   }
 
   /*
@@ -237,13 +275,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: '30%',
-    fontSize: 30
+    fontSize: 30,
+    borderRadius: 10,
 
   },
   callButton:{
       textAlign:"center",
       color:'white',
-      padding:5
+      padding:5,
+      borderRadius: 10,
   },
 
 });
