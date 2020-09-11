@@ -6,32 +6,52 @@ import UserData from './src/componet/UserData';
 //import UserItem from './src/componet/UserItem';
 import ReciveCall from './src/componet/ReciveCall';
 import List from './src/container/ListContact';
+import Add from './src/componet/Add'
 
 
+
+import axios from 'react-native-axios';
+
+let host ='http://192.168.1.12:3000'
+let usercode= 979010454
 export default class App extends React.Component {
 
-  showList = () =>(!this.state.llamando)? this.setState({ showList: false, showPerfil: false }):{};
+  showList = () =>{
+    return (!this.state.llamando)? this.setState({ showList: !this.state.showList, showPerfil: false }):{};}
 
   constructor(props) {
     super(props)
     this.state = {
       data: [
         {
-          title: 'contacto 1 ',
-          code: 'p1',
+          name: 'contacto 1 ',
+          id: 'p1',
           key: 'p1',
+          photo:'',
+          state:"NoProblem"
         },
         {
-          title: 'contacto 2 ',
-          code: 'p2',
+          name: 'contacto 2 ',
+          id: 'p2',
           key: 'p2',
+          photo:'',
+          state:"NoProblem"
         },
         {
-          title: 'contacto 3 ',
-          code: 'p3',
-          key: 'p3'
+          name: 'contacto 3 ',
+          id: 'p3',
+          key: 'p3',
+          photo:'',
+          state:"NoProblem"
         }
       ],
+      perfil:{
+        name: 'contacto 3 ',
+          id: 'p3',
+          key: 'p3',
+          photo:'',
+          state:"NoProblem"
+      },
       cont: 4,
       llamando: false,
       showPerfil: false,
@@ -40,12 +60,44 @@ export default class App extends React.Component {
 
     }
   }
+ componentDidMount(){
+  this.updateData()
+ }
+ updateData(){
+  const urlcontact = host + '/api/users/contacts/'+usercode;
+  const urlperfil = host + '/api/users/get/'+usercode;
+
+  //console.log('req'+urlcontact)
+
+   
+   axios.get(urlcontact)
+   .then(res => {
+    const persons = res.data;
+   // console.log(res)
+   //console.log(res.data)
+    //console.log(res.data.users)
+    let users = res.data.userContact
+    users=users.map((index)=>{
+      index.key= 'k' + this.state.cont + 1 + '' + new Date()
+      return index
+    })
+    
+    this.setState({data:users})
+    //this.setState({ persons });
+  })
+  .then(()=>axios.get(urlperfil))
+  .then((res)=>{
+    //console.log(res.data.users)
+    this.setState( {perfil:res.data.users})
+  })
+  .catch((e)=>console.log(e))
+ }
 
   add() {
     let data = this.state.data
     data.push({
-      title: 'contacto ' + (data.length + 1),
-      code: 'k' + this.state.cont + 1 + '',
+      name: 'contacto ' + (data.length + 1),
+      id: 'k' + this.state.cont + 1 + ''+new Date(),
       key: 'k' + this.state.cont + 1 + '' + new Date(),
 
     })
@@ -54,21 +106,21 @@ export default class App extends React.Component {
 
 
 
-  delete(code) {
-    let data = this.state.data
-    for (let index = 0; index < data.length; index++) {
-      if (data[index].code === code) {
-        data.splice(index, 1)
-        break;
-      }
-    }
-    this.setState({ data: data })
+  delete(id) {
+    const urlall = host + '/api/users/delcontact/'+usercode+'/'+id;
+    axios.get(urlall).
+    then((res)=>{
+      this.updateData()
+
+    })
+    .catch((e)=>console.log(e))
   }
 
 
 
   List() {
     let data = this.state.data
+    //console.log(this.state.showList)
     if (this.state.showList)
       return (
         <List data={data} add={() => this.add()} delete={(key) => this.delete(key)} />
@@ -89,10 +141,11 @@ export default class App extends React.Component {
 
   showUser() {
     if (this.state.showPerfil && !this.state.llamando)
-      return (<UserData title={{ name: 'megano', code: '1234' }}  ></UserData>)
+      return (<UserData title={{ name: this.state.perfil.name, code: this.state.perfil.id , photo:this.state.perfil.photo }}  ></UserData>)
   }
 
   showCall() {
+
     if (this.state.showCalling)
       return (
         ReciveCall({ name: 'el vato', code: '1234' })
@@ -143,7 +196,6 @@ export default class App extends React.Component {
         {this.calling()}
         {this.List()}
         {this.showCall()}
-
       </View>
     );
   }

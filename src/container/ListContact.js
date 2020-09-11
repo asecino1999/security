@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Image, ScrollView } from 'react-native';
 import UserItem from '../componet/UserItem';
-
+import Add from '../componet/Add'
 export default class List extends React.Component {
     separator = () => <View style={styles.separator} />
     add = () => this.props.add()
@@ -10,8 +10,8 @@ export default class List extends React.Component {
         console.log(item)
         return (
             <UserItem
-                title={item.title}
-                code={item.code}
+                title={item.name}
+                code={item.id}
                 delete={(code) => this.delete(code)} />
         )
     }
@@ -19,15 +19,14 @@ export default class List extends React.Component {
         let data = this.props.data
         return (
             <View>
-                <Button
-                    title={'add'}
-                    onPress={() => this.add()}
-                />
+                
                 <FlatList
                     data={data}
                     ItemSeparatorComponent={() => this.separator()}
                     renderItem={(item) => this.renderItem(item)}
                 />
+                <Add  add = {() => this.add()}  ></Add>
+
             </View>)
     }
 }

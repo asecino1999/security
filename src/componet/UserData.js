@@ -10,9 +10,21 @@ export default class UserData extends React.Component {
             source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/220px-User_icon_2.svg.png' }}
             style={styles.tinyLogo}
           />
+          <View>
+          <View>
           <Text style={styles.userProf}  >  nombre : {this.props.title.name}  </Text>
-          <Text style={styles.userProf} >  codigo : {this.props.title.code}  </Text>
+          </View>
+          <View>
+          <Text style={styles.userProf} >  telefono : {this.props.title.code}  </Text>
+          </View>
+          <View>
+          <Text style={styles.userProf} >  email : {this.props.title.email}  </Text>
+          </View>
+
+          </View>
+          
         </View>
+
         <Button
           title={'logout'}
         />
